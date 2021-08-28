@@ -1,0 +1,28 @@
+.main-container {
+  background-color: #d0baff;
+  padding: auto;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.quality-bar {
+  background: linear-gradient(
+    0.25turn,
+    green,
+    yellow,
+    orange,
+    red,
+    crimson,
+    purple
+  );
+  width: 30%;
+  height: 5%;
+  padding: auto;
+  margin: auto;
+}
+
+.btn {
+  padding: 0.6rem;
+  font-size: large;
+}
