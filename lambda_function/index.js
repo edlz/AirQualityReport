@@ -7,7 +7,9 @@ const API_IP_KEY = "SECRET";
 exports.handler = async (event) => {
   try {
     let { ip, state, city, country } = event;
-
+    if (ip == null && city == null) {
+      return { ip: event.headers["x-forwarded-for"] };
+    }
     if (ip != null) {
       const getLoc = await axios({
         url: `http://api.ipstack.com/${ip}?access_key=${API_IP_KEY}`,
