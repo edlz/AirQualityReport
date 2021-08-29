@@ -7,10 +7,11 @@ const API_IP_KEY = "SECRET";
 exports.handler = async (event) => {
   try {
     let { ip, state, city, country } = event;
+
     if (ip == null && city == null) {
       return { ip: event.headers["x-forwarded-for"] };
     }
-    if (ip != null) {
+    if (ip != null && ip.length !== 0) {
       const getLoc = await axios({
         url: `http://api.ipstack.com/${ip}?access_key=${API_IP_KEY}`,
         method: "get",
@@ -39,7 +40,6 @@ exports.handler = async (event) => {
       country.toLowerCase(),
       countriesList
     );
-    //console.log(countriesMatch);
     country = countriesMatch.bestMatch.target;
     // air api has united states as USA
     if ("United States" == country) {
@@ -77,12 +77,10 @@ exports.handler = async (event) => {
       url: `http://api.airvisual.com/v2/city?city=${city}&state=${state}&country=${country}&key=${API_AIR_KEY}`,
       method: "get",
     });
-    //testing
-    //console.log(res.data);
 
     return res.data;
   } catch (e) {
-    console.log(e);
-    return { error: "Server error" };
+    console.log(e.response.data);
+    return { error: e.response.data.data.message };
   }
 };
