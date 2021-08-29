@@ -77,7 +77,7 @@ const Site = () => {
       `https://dyrbwt49he.execute-api.us-west-1.amazonaws.com/default/getAirQuality?state=${state}&city=${city}&country=${country}`
     );
     if (d.data.error || d.data.data == null) {
-      setMessage("Error");
+      setMessage("Error - " + d.data.error);
     } else {
       setLocation(d.data.data.city, d.data.data.state, d.data.data.country);
       setMessage(`US AQI ${d.data.data.current.pollution.aqius}`);
