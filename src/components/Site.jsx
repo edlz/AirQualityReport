@@ -8,20 +8,23 @@ import Metrics from "./Metrics";
 import "./Site.css";
 
 const Site = () => {
-  // state
-  const [IP, setIP] = useState("");
+  // messages
   const [message, setMessage] = useState("");
   const [locationString, setLocationString] = useState("");
+  const [aqiColor, setAqiColor] = useState("");
+  // info
+  const [IP, setIP] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
+  const [aqi, setAqi] = useState(null);
+  // state
   const [loading, setLoading] = useState(true);
   const [ipSearchError, setIpError] = useState(false);
 
   // mounting
-  useEffect(async () => {
-    const ipv4 = await getIP();
-    await getDataWithIP(ipv4);
+  useEffect(() => {
+    getIP().then((ipv4) => getDataWithIP(ipv4));
   }, []);
   // update locationString
   useEffect(() => {
@@ -34,6 +37,37 @@ const Site = () => {
       setLocationString("Error");
     }
   }, [loading]);
+  // aqi message
+  useEffect(() => {
+    if (aqi) {
+      if (aqi <= 50) {
+        setMessage(`${aqi} - Good`);
+        setAqiColor("green");
+      } else if (aqi <= 100) {
+        setMessage(`${aqi} - Moderate`);
+        setAqiColor("yellow");
+      } else if (aqi <= 150) {
+        setMessage(`${aqi} - Unhealthy for Sensitive Groups`);
+        setAqiColor("orange");
+      } else if (aqi <= 200) {
+        setMessage(`${aqi} - 	Unhealthy`);
+        setAqiColor("red");
+      } else if (aqi <= 300) {
+        setMessage(`${aqi} - 	Very Unhealthy`);
+        setAqiColor("purple");
+      } else {
+        setMessage(`${aqi} - 	Hazardous`);
+        setAqiColor("crimson");
+      }
+    } else {
+      setAqiColor("");
+    }
+  }, [aqi]);
+  useEffect(() => {
+    if (message.startsWith("Error")) {
+      setAqi(null);
+    }
+  }, [message]);
 
   // functions
   const setLocation = (city, state, country) => {
@@ -57,16 +91,15 @@ const Site = () => {
     const d = await axios.get(
       `https://dyrbwt49he.execute-api.us-west-1.amazonaws.com/default/getAirQuality?ip=${ipv4}`
     );
-
     if (d.data.error) {
       setMessage("Error - " + d.data.error);
       setIpError(true);
     } else if (d.data.data) {
       setLocation(d.data.data.city, d.data.data.state, d.data.data.country);
-      setMessage(`${d.data.data.current.pollution.aqius}`);
+      setAqi(d.data.data.current.pollution.aqius);
       setIpError(false);
     } else {
-      setMessage("Error");
+      setMessage("Unexpected Error");
       setIpError(true);
     }
     setLoading(false);
@@ -81,7 +114,7 @@ const Site = () => {
       setMessage("Error - " + d.data.error);
     } else {
       setLocation(d.data.data.city, d.data.data.state, d.data.data.country);
-      setMessage(`US AQI ${d.data.data.current.pollution.aqius}`);
+      setAqi(d.data.data.current.pollution.aqius);
     }
     setLoading(false);
   };
@@ -99,6 +132,7 @@ const Site = () => {
           locationString={locationString}
           message={message}
           loading={loading}
+          aqiColor={aqiColor}
         />
 
         <Grid
@@ -111,7 +145,7 @@ const Site = () => {
           <Button
             variant="contained"
             color={ipSearchError ? "secondary" : "primary"}
-            onClick={getDataWithIP}
+            onClick={() => getDataWithIP(IP)}
             className="btn"
           >
             Reload IP Search
