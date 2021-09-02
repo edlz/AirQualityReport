@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Grid, CircularProgress } from "@material-ui/core";
 
-const Metrics = ({ IP, locationString, message, loading }) => {
+const Metrics = ({ IP, locationString, message, loading, aqiColor }) => {
   return (
     <Fragment>
       <Grid item sm={5} className="label-container">
@@ -19,7 +19,7 @@ const Metrics = ({ IP, locationString, message, loading }) => {
       <Grid item sm={5} className="label-container">
         Air Quality :
       </Grid>
-      <Grid item sm={7} className="metric-container">
+      <Grid item sm={7} className={`metric-container level-${aqiColor}`}>
         {!loading ? message : <CircularProgress color="secondary" />}
       </Grid>
     </Fragment>

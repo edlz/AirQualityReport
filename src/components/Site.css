@@ -66,3 +66,26 @@
   margin: auto;
   border-radius: 5px;
 }
+
+.level-green {
+  color: green;
+}
+
+.level-yellow {
+  color: yellow;
+}
+
+.level-orange {
+  color: orange;
+}
+
+.level-red {
+  color: red;
+}
+
+.level-purple {
+  color: purple;
+}
+.level-crimson {
+  color: crimson;
+}
