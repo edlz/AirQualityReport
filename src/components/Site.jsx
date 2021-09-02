@@ -20,12 +20,12 @@ const Site = () => {
 
   // mounting
   useEffect(async () => {
-    await getIP();
-    getDataWithIP();
+    const ipv4 = await getIP();
+    await getDataWithIP(ipv4);
   }, []);
   // update locationString
   useEffect(() => {
-    if (city.length == 0 || state.length == 0) {
+    if (city.length === 0 || state.length === 0) {
       setLocationString("");
     } else {
       setLocationString(city + ", " + state);
@@ -52,11 +52,12 @@ const Site = () => {
     }
   };
 
-  const getDataWithIP = async () => {
+  const getDataWithIP = async (ipv4) => {
     setLoading(true);
     const d = await axios.get(
-      `https://dyrbwt49he.execute-api.us-west-1.amazonaws.com/default/getAirQuality?ip=${IP}`
+      `https://dyrbwt49he.execute-api.us-west-1.amazonaws.com/default/getAirQuality?ip=${ipv4}`
     );
+
     if (d.data.error) {
       setMessage("Error - " + d.data.error);
       setIpError(true);
